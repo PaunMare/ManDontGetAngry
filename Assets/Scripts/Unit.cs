@@ -25,25 +25,47 @@ public class Unit : MonoBehaviour
 
     public void MoveToStartingPosition()
     {
-        if (inHome && dice.GetComponent<Dice>().currentNumber == 5)
+        if (inHome)
         {
+            inHome = false;
+            startingPosition.GetComponent<PlaceHolder>().currentObject = this.gameObject;
             currentPosition = startingPosition;
             this.gameObject.transform.position = startingPosition.transform.position;
-            inHome = false;
+            indexPosition = 0;
         }
     }
     public void ReturnToTheHouse()
     {
-        currentPosition = homePosition;
+        this.gameObject.transform.position = homePosition.transform.position;
         inHome = true;
+        //indexPosition = -1;
     }
     public void MoveThroughTheField()
     {
         if (!inHome)
         {
-            currentPosition = fieldPositions[dice.GetComponent<Dice>().currentNumber+indexPosition+1];
-            this.transform.position = currentPosition.transform.position;
-            indexPosition += dice.GetComponent<Dice>().currentNumber+1;
+            if(fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1].GetComponent<PlaceHolder>().currentObject != null)
+            {
+                if (!fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1].CompareTag(this.gameObject.tag))
+                {
+                    fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1].GetComponent<PlaceHolder>().currentObject.GetComponent<Unit>().ReturnToTheHouse();
+                    currentPosition.GetComponent<PlaceHolder>().currentObject = null;
+                    
+                    fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1].GetComponent<PlaceHolder>().currentObject = this.gameObject;
+                    currentPosition = fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1];
+                    this.transform.position = currentPosition.transform.position;
+                    indexPosition += dice.GetComponent<Dice>().currentNumber + 1;
+                    
+                }
+            }
+            else
+            {
+                currentPosition.GetComponent<PlaceHolder>().currentObject = null;
+                currentPosition = fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1];
+                this.transform.position = currentPosition.transform.position;
+                fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1].GetComponent<PlaceHolder>().currentObject = this.gameObject;
+                indexPosition += dice.GetComponent<Dice>().currentNumber + 1;
+            }
         }
     }
 

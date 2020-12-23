@@ -29,11 +29,9 @@ public class LevelManager : MonoBehaviour
             print(g.name);
         }
         print(currentPlayer.name);
+        
     }
-    void Start()
-    {
-       
-    }
+
 
     // Update is called once per frame
     void Update()
@@ -82,9 +80,17 @@ public class LevelManager : MonoBehaviour
                         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                         if (Physics.Raycast(ray, out hit, 1000f))
                         {
-                            if (hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit"))
+                            if (hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit") && !hit.transform.gameObject.GetComponent<Unit>().inHome)
                             {
                                 hit.transform.gameObject.GetComponent<Unit>().MoveThroughTheField();
+                                rollTheDicce.interactable = true;
+                                leftRotate(players, 0, players.Length);
+                                currentPlayer = players[0];
+                                dice.GetComponent<Dice>().pressed = false;
+                            }
+                            if(hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit") && hit.transform.gameObject.GetComponent<Unit>().inHome)
+                            {
+                                hit.transform.gameObject.GetComponent<Unit>().MoveToStartingPosition();
                                 rollTheDicce.interactable = true;
                                 leftRotate(players, 0, players.Length);
                                 currentPlayer = players[0];
