@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     
     System.Random a;
-   
+    public Text text;
     public GameObject[] redUnits, blueUnits, yellowUnits, greenUnits;
-    public GameObject[] players;
+    GameObject[] players;
     GameObject red, blue, yellow, green;
     GameObject currentPlayer;
     public GameObject dice;
     public Button rollTheDicce;
     int firstPlayer;
+    GameObject[] currentUnits;
     private void Awake()
     {
         red = GameObject.Find("Red");
@@ -22,9 +24,16 @@ public class LevelManager : MonoBehaviour
         blue = GameObject.Find("Blue");
         a = new System.Random();
         firstPlayer = a.Next(4);
+        players = new GameObject[4];
+        players[0] = red;
+        players[1] = green;
+        players[2] = yellow;
+        players[3] = blue;
+
         leftRotate(players, firstPlayer, players.Length);
         currentPlayer = players[0];
-        foreach(GameObject g in players)
+        text.text = "Current playing: " + currentPlayer.name;
+        foreach (GameObject g in players)
         {
             print(g.name);
         }
@@ -36,8 +45,10 @@ public class LevelManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (dice.GetComponent<Dice>().pressed)
         {
+            
             if (currentPlayer.GetComponent<Player>().AllInHouse())
             {
                 if(dice.GetComponent<Dice>().currentNumber == 5)
@@ -56,6 +67,7 @@ public class LevelManager : MonoBehaviour
 
                                 leftRotate(players, 0, players.Length);
                                 currentPlayer = players[0];
+                                text.text = "Current playing: " + currentPlayer.name;
                                 dice.GetComponent<Dice>().pressed = false;
                             }
                         }
@@ -66,12 +78,23 @@ public class LevelManager : MonoBehaviour
                     leftRotate(players, 1, players.Length);
                     rollTheDicce.interactable = true;
                     currentPlayer = players[0];
+                    text.text = "Current playing: " + currentPlayer.name;
                     dice.GetComponent<Dice>().pressed = false;
                 }
             }
             else
             {
-                if(dice.GetComponent<Dice>().currentNumber == 5)
+                if (currentPlayer.GetComponent<Player>().AllDeactivated())
+                {
+                    rollTheDicce.interactable = true;
+
+                    leftRotate(players, 1, players.Length);
+                    currentPlayer = players[0];
+                    text.text = "Current playing: " + currentPlayer.name;
+                    dice.GetComponent<Dice>().pressed = false;
+                    return;
+                }
+                if (dice.GetComponent<Dice>().currentNumber == 5)
                 {
                     rollTheDicce.interactable = false;
                     if (Input.GetMouseButtonDown(0))
@@ -86,6 +109,7 @@ public class LevelManager : MonoBehaviour
                                 rollTheDicce.interactable = true;
                                 leftRotate(players, 0, players.Length);
                                 currentPlayer = players[0];
+                                text.text = "Current playing: " + currentPlayer.name;
                                 dice.GetComponent<Dice>().pressed = false;
                             }
                             if(hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit") && hit.transform.gameObject.GetComponent<Unit>().inHome)
@@ -94,6 +118,7 @@ public class LevelManager : MonoBehaviour
                                 rollTheDicce.interactable = true;
                                 leftRotate(players, 0, players.Length);
                                 currentPlayer = players[0];
+                                text.text = "Current playing: " + currentPlayer.name;
                                 dice.GetComponent<Dice>().pressed = false;
                             }
                         }
@@ -114,157 +139,26 @@ public class LevelManager : MonoBehaviour
                                 leftRotate(players, 1, players.Length);
                                 rollTheDicce.interactable = true;
                                 currentPlayer = players[0];
+                                text.text = "Current playing: " + currentPlayer.name;
                                 dice.GetComponent<Dice>().pressed = false;
                             }
                         }
                     }
                 }
             }
+           
+            currentPlayer.GetComponent<Player>().ActivateAll();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //if (dice.GetComponent<Dice>().pressed)
-        //{
-        //    if (!currentPlayer.GetComponent<Player>().AllInHouse())
-        //    {
-        //        currentPlayer.GetComponent<Player>().hasUnit = true;
-        //        if (currentPlayer.GetComponent<Player>().hasUnit)
-        //        {
-        //            rollTheDicce.interactable = false;
-        //            if (Input.GetMouseButtonDown(0))
-        //            {
-        //                RaycastHit hit;
-        //                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //                if(Physics.Raycast(ray,out hit, 1000f))
-        //                {
-        //                    if (hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit"))
-        //                    {
-        //                        rollTheDicce.interactable = true;
-        //                        hit.transform.gameObject.GetComponent<Unit>().MoveThroughTheField();
-        //                        //hit.transform.gameObject.GetComponent<Unit>().MoveToStartingPosition();
-
-
-        //                        dice.GetComponent<Dice>().pressed = false;
-        //                        if (dice.GetComponent<Dice>().currentNumber == 5)
-        //                        {
-        //                            leftRotate(players, 0, players.Length);
-        //                        }
-        //                        else
-        //                        {
-        //                            leftRotate(players, 1, players.Length);
-        //                        }
-        //                        currentPlayer = players[0];
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if(rollTheDicce.GetComponent<Dice>().currentNumber == 5)
-        //        {
-        //            RaycastHit hit;
-        //            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //            if (Physics.Raycast(ray, out hit, 1000f))
-        //            {
-        //                if (hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit"))
-        //                {
-        //                    rollTheDicce.interactable = true;
-        //                    //hit.transform.gameObject.GetComponent<Unit>().MoveThroughTheField();
-        //                    hit.transform.gameObject.GetComponent<Unit>().MoveToStartingPosition();
-
-
-        //                    dice.GetComponent<Dice>().pressed = false;
-        //                    if (dice.GetComponent<Dice>().currentNumber == 5)
-        //                    {
-        //                        leftRotate(players, 0, players.Length);
-        //                    }
-        //                    else
-        //                    {
-        //                        leftRotate(players, 1, players.Length);
-        //                    }
-        //                    currentPlayer = players[0];
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            leftRotate(players, 1, players.Length);
-        //            currentPlayer = players[0];
-        //        }
-        //    }
-                //if (currentPlayer.GetComponent<Player>().hasUnit)
-                //{
-                //    rollTheDicce.interactable = false;
-                //    if (Input.GetMouseButtonDown(0))
-                //    {
-                //        RaycastHit hit;
-                //        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                //        if (Physics.Raycast(ray, out hit, 1000f))
-                //        {
-                //            if (hit.transform.gameObject.CompareTag(currentPlayer.tag + "Unit"))
-                //            {
-                //                rollTheDicce.interactable = true;
-                //                hit.transform.gameObject.GetComponent<Unit>().MoveThroughTheField();
-                //                hit.transform.gameObject.GetComponent<Unit>().MoveToStartingPosition();
-
-
-                //                dice.GetComponent<Dice>().pressed = false;
-                //                if (dice.GetComponent<Dice>().currentNumber == 5)
-                //                {
-                //                    leftRotate(players, 0, players.Length);
-                //                }
-                //                else
-                //                {
-                //                    leftRotate(players, 1, players.Length);
-                //                }
-                //                currentPlayer = players[0];
-                //            }
-                //        }
-                //    }
-                //}
-            
+        if (currentPlayer.GetComponent<Player>().units[0].GetComponent<Unit>().EndingPosition()
+              && currentPlayer.GetComponent<Player>().units[1].GetComponent<Unit>().EndingPosition()
+              && currentPlayer.GetComponent<Player>().units[2].GetComponent<Unit>().EndingPosition()
+              && currentPlayer.GetComponent<Player>().units[3].GetComponent<Unit>().EndingPosition())
+        {
+            PlayerPrefs.SetString("winner", currentPlayer.gameObject.name);
+            SceneManager.LoadScene(1);
+            print("Winner" + currentPlayer.name);
         }
+    }
     static void leftRotate(GameObject[] arr, int d, int n)
     {
         for (int i = 0; i < d; i++)
