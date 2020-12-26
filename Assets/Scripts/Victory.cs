@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class Victory : MonoBehaviour
 {
     public Button exit;
@@ -11,9 +12,8 @@ public class Victory : MonoBehaviour
         text.text ="The winner is: " + PlayerPrefs.GetString("winner");
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ReturnToMainMenu()
     {
-        
+        SceneManager.LoadScene(0);
     }
 }
