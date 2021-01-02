@@ -9,11 +9,12 @@ public class Unit : MonoBehaviour
     public GameObject[] fieldPositions;
     public GameObject currentPosition;
     public GameObject currentObject;
-    public bool inHome = true;
+    public bool inHome = true,safeHouse = false;
     public GameObject dice;
     public int indexPosition = 0;
     public GameObject placeholder;
     public GameObject[] otherUnits;
+    public GameObject[] endingPositions;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,8 +24,7 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentObject = fieldPositions[0].GetComponent<PlaceHolder>().currentObject;
-        TurnOffTurnON();
+        currentObject = fieldPositions[0].GetComponent<PlaceHolder>().currentObject; 
     }
 
     public void MoveToStartingPosition()
@@ -35,7 +35,6 @@ public class Unit : MonoBehaviour
             if (startingPosition.gameObject.GetComponent<PlaceHolder>().currentObject == null)
             {
                 inHome = false;
-                //startingPosition.GetComponent<PlaceHolder>().currentObject.GetComponent<Unit>().ReturnToTheHouse();
                 currentObject = this.gameObject;
                 fieldPositions[0].GetComponent<PlaceHolder>().currentObject = this.gameObject;
                 currentPosition = startingPosition;
@@ -83,7 +82,6 @@ public class Unit : MonoBehaviour
                         currentPosition = fieldPositions[dice.GetComponent<Dice>().currentNumber + indexPosition + 1];
                         this.transform.position = currentPosition.transform.position;
                         indexPosition += dice.GetComponent<Dice>().currentNumber + 1;
-  
                     }
                 }
                 else
@@ -108,7 +106,7 @@ public class Unit : MonoBehaviour
     }
     public int ReturnFieldsTillEnd()
     {
-        return fieldPositions.Length - ReturnIndex(currentPosition, fieldPositions);
+        return fieldPositions.Length - ReturnIndex(currentPosition, fieldPositions)-1;
     }
     public int ReturnIndex(GameObject g, GameObject[] positions)
     {
@@ -122,22 +120,22 @@ public class Unit : MonoBehaviour
     }
     public void TurnOffTurnON()
     {
-        if (dice.GetComponent<Dice>().currentNumber > ReturnFieldsTillEnd() + 1)
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
-        }
-        else
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
-        }
+        //if (dice.GetComponent<Dice>().currentNumber > ReturnFieldsTillEnd() + 1)
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        //}
+        //else
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        //}
         if (this.gameObject.GetComponent<Unit>().inHome && currentObject != null && currentObject.CompareTag(this.gameObject.tag))
         {
             this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
         }
         else
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
-        }
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        //}
         if (inHome
             && currentObject != null
             && currentObject.CompareTag(this.gameObject.tag)
@@ -146,39 +144,38 @@ public class Unit : MonoBehaviour
             this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
         }
         else
-        if (inHome && currentObject == null)
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
-        }
-        if (inHome && dice.GetComponent<Dice>().currentNumber == 5 && currentObject != null && currentObject.CompareTag(this.gameObject.tag))
+        if (inHome && currentObject == null && dice.GetComponent<Dice>().currentNumber != 5)
         {
             this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
         }
-
-        if (ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 < fieldPositions.Length)
+        //if (inHome && dice.GetComponent<Dice>().currentNumber == 5 && currentObject != null && currentObject.CompareTag(this.gameObject.tag))
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        //}
+        else
+        if (ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 > fieldPositions.Length)
         {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+            this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
         }
         else
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
-        }
-        if (ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 >= fieldPositions.Length)
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
-        }
-        if (OtherInHouse() && ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 < fieldPositions.Length)
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
-        }
-        else
-        {
-            this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
-        }
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        //}
+        //if (ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 >= fieldPositions.Length)
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        //}
+        //if (OtherInHouse() && ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 < fieldPositions.Length)
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
+        //}
+        //else
+        //{
+        //    this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        //}
 
         if (ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 < fieldPositions.Length
             && fieldPositions[ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1].GetComponent<PlaceHolder>().currentObject != null
-            && ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1 < fieldPositions.Length
             && fieldPositions[ReturnIndex(this.currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1].GetComponent<PlaceHolder>().currentObject.CompareTag(this.gameObject.tag))
         {
             this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
@@ -187,12 +184,9 @@ public class Unit : MonoBehaviour
         {
             this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
         }
-
-        //if ((inHome && dice.GetComponent<Dice>().currentNumber < 5)
-        //    || (inHome && dice.GetComponent<Dice>().currentNumber < 5 && currentObject != null && this.gameObject.CompareTag(currentObject.tag))
-        //    || (!inHome && fieldPositions[ReturnIndex(currentPosition,fieldPositions)+dice.GetComponent<Dice>().currentNumber + 1].GetComponent<PlaceHolder>().currentObject != null
-        //    && fieldPositions[ReturnIndex(currentPosition, fieldPositions) + dice.GetComponent<Dice>().currentNumber + 1].GetComponent<PlaceHolder>().currentObject.CompareTag(this.gameObject.tag)
-        //    && ReturnIndex(currentPosition,fieldPositions)+dice.GetComponent<Dice>().currentNumber + 1 < fieldPositions.Length))
+        //if (safeHouse && dice.GetComponent<Dice>().currentNumber + ReturnIndex(currentPosition, fieldPositions) + 1 < fieldPositions.Length
+        //    && fieldPositions[ReturnIndex(currentPosition, fieldPositions) + 1].GetComponent<PlaceHolder>().currentObject != null
+        //    && fieldPositions[ReturnIndex(currentPosition, fieldPositions) + 1].GetComponent<PlaceHolder>().currentObject.CompareTag(this.gameObject.tag))
         //{
         //    this.gameObject.GetComponent<CapsuleCollider>().enabled = false;
         //}
@@ -200,9 +194,10 @@ public class Unit : MonoBehaviour
         //{
         //    this.gameObject.GetComponent<CapsuleCollider>().enabled = true;
         //}
-
+       
+    
     }
-
+    
 
     public bool IsItAtHome()
     {

@@ -14,17 +14,7 @@ public class Player : MonoBehaviour
         this.units = units;
     }
    
-    //public bool AllDeactivated()
-    //{
-    //    foreach (GameObject g in units)
-    //    {
-    //        if (g.GetComponent<CapsuleCollider>().enabled == true)
-    //        {
-    //            return false;
-    //        }
-    //    }
-    //    return true;
-    //}
+   
     public bool AllDeactivated()
     {
         if(units[0].gameObject.GetComponent<CapsuleCollider>().enabled == false
