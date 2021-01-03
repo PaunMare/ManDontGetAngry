@@ -13,11 +13,11 @@ public class Player : MonoBehaviour
     {
         this.units = units;
     }
-   
-   
+
+
     public bool AllDeactivated()
     {
-        if(units[0].gameObject.GetComponent<CapsuleCollider>().enabled == false
+        if (units[0].gameObject.GetComponent<CapsuleCollider>().enabled == false
             && units[1].gameObject.GetComponent<CapsuleCollider>().enabled == false
             && units[2].gameObject.GetComponent<CapsuleCollider>().enabled == false
             && units[3].gameObject.GetComponent<CapsuleCollider>().enabled == false)
@@ -32,30 +32,38 @@ public class Player : MonoBehaviour
 
     public bool AllInHouse()
     {
-       foreach(GameObject g in units)
+        foreach (GameObject g in units)
         {
             if (!g.GetComponent<Unit>().inHome)
             {
                 return false;
             }
-        
-       }
+
+        }
         return true;
     }
     public void FixHome()
     {
+        //for (int i = 0; i < units.Length; i++)
+        //{
+        //    if (units[i].GetComponent<Unit>().inHome && startingPosition.GetComponent<PlaceHolder>().currentObject != null && startingPosition.GetComponent<PlaceHolder>().currentObject.CompareTag(units[i].gameObject.tag))
+        //    {
+        //        units[i].gameObject.GetComponent<CapsuleCollider>().enabled = false;
+        //    }
+
+        //}
         for (int i = 0; i < units.Length; i++)
         {
-            if (units[i].GetComponent<Unit>().IsItAtHome() && startingPosition.GetComponent<PlaceHolder>().currentObject!=null && startingPosition.GetComponent<PlaceHolder>().currentObject.CompareTag(units[i].gameObject.tag))
+            if (units[i].GetComponent<Unit>().inHome
+                && units[i].GetComponent<Unit>().fieldPositions[0].GetComponent<PlaceHolder>().currentObject != null
+                && units[i].GetComponent<Unit>().fieldPositions[0].GetComponent<PlaceHolder>().currentObject.CompareTag(this.gameObject.tag))
             {
                 units[i].gameObject.GetComponent<CapsuleCollider>().enabled = false;
             }
-            else
-            {
-                continue;
-            }
         }
+
     }
+
     public GameObject OutOfTheHouse(GameObject[] units,GameObject g)
     {
         for(int i = 0; i < units.Length; i++)

@@ -94,34 +94,26 @@ public class LevelManager : MonoBehaviour
                 }
             }
             else
-            {   if(dice.GetComponent<Dice>().currentNumber == 5)
-                {
-                    currentPlayer.GetComponent<Player>().FixHome();
-                }
+            {   
+                //if(dice.GetComponent<Dice>().currentNumber == 5)
+                //{
+                //    currentPlayer.GetComponent<Player>().FixHome();
+                //}
 
                 foreach (GameObject g in currentPlayer.GetComponent<Player>().units)
                 {
                     g.GetComponent<Unit>().TurnOffTurnON();
                 }
-                //foreach (GameObject g in currentPlayer.GetComponent<Player>().units)
-                //{
-                //    if (g.GetComponent<Unit>().IsItAtHome())
-                //    {
-                //        g.GetComponent<Unit>().gameObject.GetComponent<CapsuleCollider>().enabled = false;
-                //    }
-                //}
-                //if (!currentPlayer.GetComponent<Player>().units[0].GetComponent<Unit>().IsActivated()
-                //    && !currentPlayer.GetComponent<Player>().units[1].GetComponent<Unit>().IsActivated()
-                //    && !currentPlayer.GetComponent<Player>().units[2].GetComponent<Unit>().IsActivated()
-                //    && !currentPlayer.GetComponent<Player>().units[3].GetComponent<Unit>().IsActivated())
-                //{
-                //    rollTheDicce.interactable = true;
-                //    leftRotate(players, 1, players.Length);
-                //    currentPlayer = players[0];
-                //    text.text = "Current playing: " + currentPlayer.GetComponent<Player>().nickName;
-                //    dice.GetComponent<Dice>().pressed = false;
-                //    return;
-                //}
+
+                foreach (GameObject g in currentPlayer.GetComponent<Player>().units)
+                {
+                    if(g.GetComponent<Unit>().inHome
+                        && g.GetComponent<Unit>().fieldPositions[0].GetComponent<PlaceHolder>().currentObject != null
+                        && g.GetComponent<Unit>().fieldPositions[0].GetComponent<PlaceHolder>().currentObject.CompareTag(g.gameObject.tag))
+                    {
+                        g.gameObject.GetComponent<CapsuleCollider>().enabled = false;
+                    }
+                }
 
                 if (currentPlayer.GetComponent<Player>().AllDeactivated())
                 {
